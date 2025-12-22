@@ -5,7 +5,12 @@ interface Props {
 }
 
 const AuthLayout = ({ children }: Props) => {
-  return <div className="p-40 flex justify-center">{children} </div>;
+  return (
+    <div className="p-40 flex justify-center">
+     
+      {children}{" "}
+    </div>
+  );
 };
 
 export default AuthLayout;

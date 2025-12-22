@@ -8,7 +8,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, PenBox } from "lucide-react";
 
 export const Header = () => {
   return (
@@ -23,12 +23,24 @@ export const Header = () => {
             className="h-12 w-auto object-contain"
           />
         </Link>
-        <div>
+        <div className="flex items-center space-x-4">
           <SignedIn>
-            <Link href={"/dashboard"}>
+            <Link
+              href={"/dashboard"}
+              className="gap-2 flex items-center text-gray-600 hover:text-blue-600"
+            >
               <Button variant="outline">
                 <LayoutDashboard size={18} />
-                <span className="hidden md:inline">Dashboard,</span>
+                <span className="hidden md:inline">Dashboard</span>
+              </Button>
+            </Link>{" "}
+            <Link
+              href={"/transactions/create"}
+              className="flex items-center gap-2"
+            >
+              <Button>
+                <PenBox size={18} />
+                <span className="hidden md:inline">Create Transaction</span>
               </Button>
             </Link>
           </SignedIn>
@@ -38,7 +50,7 @@ export const Header = () => {
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton />
+            <UserButton appearance={{ elements: { avatarbox: "w-10 h-10" } }} />
           </SignedIn>{" "}
         </div>
       </nav>
