@@ -1,7 +1,7 @@
 "use server";
 
 import { Account, Prisma } from "@/lib/generated/prisma/client";
-import { newPrisma } from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
@@ -19,40 +19,44 @@ const serializeAccount = (account: Account): SerializedAccount => {
   };
 };
 
-export async function CreateAccount(
+export async function createAccount(
   data: CreateAccountInput
-): Promise<{ success: true; data: SerializedAccount }> {
+): Promise<
+  { success: true; data: SerializedAccount } | { success: false; error: string }
+> {
   try {
     const session = await auth();
     const userId = session?.userId;
-    if (!userId) throw new Error("User not authenticated");
+    if (!userId) {
+      return { success: false, error: "User not authenticated" };
+    }
 
-    const user = await newPrisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { clerkUserId: userId },
     });
     if (!user) {
-      throw new Error("User not found in database");
+      return { success: false, error: "User not found in database" };
     }
 
     const balanceFloat = Number(data.balance);
     if (Number.isNaN(balanceFloat)) {
-      throw new Error("invalid balance amount");
+      return { success: false, error: "Invalid balance amount provided" };
     }
 
-    const existingAccounts = await newPrisma.account.findMany({
+    const existingAccounts = await db.account.findMany({
       where: { userId: user.id },
     });
     const shouldBeDefault =
       existingAccounts.length === 0 ? true : Boolean(data.isDefault);
 
     if (shouldBeDefault) {
-      await newPrisma.account.updateMany({
+      await db.account.updateMany({
         where: { userId: user.id, isDefault: true },
         data: { isDefault: false },
       });
     }
 
-    const account = await newPrisma.account.create({
+    const account = await db.account.create({
       data: {
         name: data.name,
         type: data.type,
@@ -66,9 +70,10 @@ export async function CreateAccount(
     revalidatePath("/dashboard");
     return { success: true, data: serializedAccount };
   } catch (error) {
+    let errorMsg = "An unknown error occurred while creating account";
     if (error instanceof Error) {
-      throw error;
+      errorMsg = error.message;
     }
-    throw new Error("An unknown error occurred while creating account");
+    return { success: false, error: errorMsg };
   }
 }

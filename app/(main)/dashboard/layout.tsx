@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import DashboardPage from "./page";
 import { BarLoader } from "react-spinners";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -12,7 +11,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <BarLoader className="mt-4 " width={"100%"} color={"#36d7b7"} />
         }
       >
-        <DashboardPage />
+        {children}
       </Suspense>
     </div>
   );

@@ -1,8 +1,8 @@
 const DashboardPage = () => {
-  return <div className="px-5">
+  return <div>
     {/* budget */}
     {/* overview */}
-    
+
   </div>;
 };
 

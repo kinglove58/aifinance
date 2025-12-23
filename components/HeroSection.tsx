@@ -30,10 +30,10 @@ export const HeroSection = () => {
     <div className="pb-20 px-4">
       <div className="container mx-auto text-center">
         <h1 className="text-5xl md:text-8xl lg:text-[105px] gradient-title">
-          Manage Your Finances <br /> with Inteligent
+          Manage Your Finances <br /> with Intelligence
         </h1>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          An AI-Powered financial management plartform that helps you track,
+          An AI-Powered financial management platform that helps you track,
           analyze, and optimize your finances with ease and with real time
           insights.
         </p>
@@ -45,7 +45,7 @@ export const HeroSection = () => {
           </Link>{" "}
           <Link href="/#">
             <Button size="lg" variant="outline" className="px-8">
-              watched Demo
+              Watch Demo
             </Button>
           </Link>
         </div>
