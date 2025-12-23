@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { newPrisma } from "./prisma";
+import { db } from "./prisma";
 
 export const checkUser = async () => {
   const user = await currentUser();
@@ -8,7 +8,7 @@ export const checkUser = async () => {
     return null;
   }
   try {
-    const loggedUser = await newPrisma.user.findUnique({
+    const loggedUser = await db.user.findUnique({
       where: { clerkUserId: user.id },
     });
     if (loggedUser) {
@@ -16,7 +16,7 @@ export const checkUser = async () => {
     }
 
     const name = `${user.firstName} ${user.lastName}`;
-    const newUser = await newPrisma.user.create({
+    const newUser = await db.user.create({
       data: {
         clerkUserId: user.id,
         name,
@@ -27,5 +27,6 @@ export const checkUser = async () => {
     return newUser;
   } catch (error) {
     console.log("Error in checkUser:", error);
+    return null;
   }
 };

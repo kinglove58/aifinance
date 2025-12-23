@@ -1,9 +1,9 @@
-import React from 'react'
+const DashboardPage = () => {
+  return <div>
+    {/* budget */}
+    {/* overview */}
 
-const page = () => {
-  return (
-    <div>page</div>
-  )
-}
+  </div>;
+};
 
-export default page
+export default DashboardPage;
