@@ -45,7 +45,7 @@ const CreateAccountDrawer = ({ children }: CreateAccountDrawerProps) => {
       isDefault: false,
     },
   });
-  const onsubmit = async (data: any) => {
+  const onSubmit = async (data: any) => {
     try {
       const response = await fetch("/api/dashboard/create-account", {
         method: "POST",
