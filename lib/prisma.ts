@@ -10,11 +10,11 @@ declare global {
 const connectionString = `${process.env.DATABASE_URL}`;
 
 const adapter = new PrismaPg({ connectionString });
-const db = new PrismaClient({ adapter });
-if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = db;
-}
 
+const db =
+  process.env.NODE_ENV === "production"
+    ? new PrismaClient({ adapter })
+    : (globalThis.prisma ?? (globalThis.prisma = new PrismaClient({ adapter })));
 export { db };
 
 

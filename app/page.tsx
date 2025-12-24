@@ -100,7 +100,7 @@ const Homepage = () => {
             Ready to take control of your finances?
           </h2>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join Thousands of users who are already managing their finances
+            Join thousands of users who are already managing their finances
             smarter with welth
           </p>
           <Link href="/dashboard">

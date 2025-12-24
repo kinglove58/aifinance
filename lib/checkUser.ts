@@ -26,7 +26,7 @@ export const checkUser = async () => {
     });
     return newUser;
   } catch (error) {
-    console.log("Error in checkUser:", error);
+    console.error("Error in checkUser:", error);
     return null;
   }
 };
