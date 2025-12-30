@@ -10,13 +10,26 @@ type CreateAccountInput = Pick<
   "name" | "type" | "balance" | "isDefault"
 >;
 
-type SerializedAccount = Omit<Account, "balance"> & { balance: number };
+type SerializedAccount = Omit<Account, "balance"> & { 
+  balance?: number;  // Made optional for conditional inclusion
+  amount?: number;   // New field, conditionally included
+  _count?: { transactions: number };  // Added to match the included _count from query
+};
 
 const serializeAccount = (account: Account): SerializedAccount => {
-  return {
-    ...account,
-    balance: account.balance.toNumber(),
-  };
+  const result: any = { ...account };
+  
+  if (account.balance) {
+    result.balance = account.balance.toNumber();
+  }
+  
+  // Assuming 'amount' is a new field; for now, set it to balance if it exists
+  // Replace this logic with your actual 'amount' calculation (e.g., from a new model field)
+  if (account.balance) {
+    result.amount = account.balance.toNumber();  // Or compute differently, e.g., Math.abs(account.balance.toNumber())
+  }
+  
+  return result as SerializedAccount;
 };
 
 export async function createAccount(
@@ -76,4 +89,33 @@ export async function createAccount(
     }
     return { success: false, error: errorMsg };
   }
+}
+
+export async function getUserAccounts(): Promise<SerializedAccount[]> {
+  const session = await auth();
+  const userId = session?.userId;
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+  if (!user) {
+    throw new Error("User not found in database");
+  }
+
+  const accounts = await db.account.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: {
+          transactions: true,
+        },
+      },
+    },
+  });
+  const serializedAccount = accounts.map(serializeAccount);
+  return serializedAccount;
 }
