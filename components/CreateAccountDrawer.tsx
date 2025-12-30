@@ -14,7 +14,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,11 @@ import { AccountSchema } from "@/app/lib/schema";
 import { Input } from "./ui/input";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
+import useFetch from "@/hook/useFetch";
+import { createAccount } from "@/action/dashboard";
+import { Loader2 } from "lucide-react";
+import { create } from "domain";
+import { toast } from "sonner";
 
 interface CreateAccountDrawerProps {
   children?: ReactNode;
@@ -45,18 +50,26 @@ const CreateAccountDrawer = ({ children }: CreateAccountDrawerProps) => {
       isDefault: false,
     },
   });
-  const onSubmit = async (data: any) => {
-    try {
-      const response = await fetch("/api/dashboard/create-account", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-    } catch (error) {
-      console.error("Error creating account:", error);
+  const {
+    error,
+    loading: createAccountLoading,
+    fetchData: createAccountFn,
+    data: newAccount,
+  } = useFetch(createAccount);
+
+  useEffect(() => {
+    if (newAccount && !createAccountLoading) {
+      toast.success("Account created successfully!");
+      reset();
+      setIsOpen(false);
     }
+    if (error) {
+      toast.error(error.message || "Failed to create account");
+    }
+  }, [createAccountLoading, newAccount, error]);
+
+  const onSubmit = async (data: any) => {
+    await createAccountFn(data);
   };
 
   return (
@@ -67,7 +80,7 @@ const CreateAccountDrawer = ({ children }: CreateAccountDrawerProps) => {
           <DrawerTitle>Create a new Account</DrawerTitle>
         </DrawerHeader>
         <div className="px-4 pb-4">
-          <form className="space-y-4" onSubmit={handleSubmit(onsubmit)}>
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-2">
               <div>
                 <label htmlFor="name" className="text-sm font-medium">
@@ -147,8 +160,19 @@ const CreateAccountDrawer = ({ children }: CreateAccountDrawerProps) => {
                   Cancel
                 </Button>
               </DrawerClose>
-              <Button type="submit" className="flex-1">
-                Create Account
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={createAccountLoading}
+              >
+                {createAccountLoading ? (
+                  <>
+                    <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </div>
           </form>
