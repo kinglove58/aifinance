@@ -50,7 +50,7 @@ const AccountCard = ({ account }: AccountCardProps) => {
   }, [updateDefaultLoading, updatedAccount, error]);
   return (
     <Card className="hover:shadow-md transition-shadow group relative ">
-      <Link href={`/accounts/${id}`}>
+      <Link href={`/account/${id}`}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="capitalize text-sm font-medium">
             {name}
